@@ -8,66 +8,41 @@ package com.example.hydratme.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.tooling.preview.devices.WearDevices
+import com.example.hydratme.presentation.model.Counter
 import com.example.hydratme.R
-import com.example.hydratme.presentation.theme.HydratMeTheme
+
+
+import android.widget.Button
+import android.widget.TextView
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var countTextView: TextView
+    private lateinit var incrementButton: Button
+    private lateinit var resetButton: Button
+    private val counter = Counter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.wear_main)
 
-        setTheme(android.R.style.Theme_DeviceDefault)
+        countTextView = findViewById(R.id.counter)
+        incrementButton = findViewById(R.id.plus_button)
+        resetButton = findViewById(R.id.reset_button)
 
-        setContent {
-            WearApp("Android")
+        updateCountDisplay()
+
+        incrementButton.setOnClickListener {
+            updateCountDisplay(counter.increment())
+        }
+
+        resetButton.setOnClickListener {
+            updateCountDisplay(counter.reset())
         }
     }
-}
 
-@Composable
-fun WearApp(greetingName: String) {
-    HydratMeTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            TimeText()
-            Greeting(greetingName = greetingName)
-        }
+    private fun updateCountDisplay(newCount: Int = counter.getCount()) {
+        countTextView.text = newCount.toString()
     }
-}
 
-@Composable
-fun Greeting(greetingName: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world, greetingName)
-    )
-}
-
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    WearApp("Preview Android")
 }
