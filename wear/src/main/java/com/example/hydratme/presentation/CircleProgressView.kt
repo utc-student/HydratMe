@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import kotlin.math.min
 
 class CircleProgressView @JvmOverloads constructor(
     context: Context,
@@ -37,7 +38,7 @@ class CircleProgressView @JvmOverloads constructor(
 
         val centerX = width / 2f
         val centerY = height / 2f
-        val radius = Math.min(centerX, centerY) - 45f // Reduce el radio
+        val radius = min(centerX, centerY) - 45f // Reduce el radio
 
         // Dibuja el fondo circular
         canvas.drawCircle(centerX, centerY, radius, backgroundPaint)

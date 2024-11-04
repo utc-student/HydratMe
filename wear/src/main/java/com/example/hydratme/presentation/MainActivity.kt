@@ -3,6 +3,7 @@ package com.example.hydratme.presentation
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.hydratme.R
 
@@ -26,9 +27,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun showDailyGoalReachedAlert() {
+        Toast.makeText(this, "¡Has logrado tu meta diaria!", Toast.LENGTH_SHORT).show()
+    }
+
     private fun updateUI(circleProgress: CircleProgressView, waterCountText: TextView) {
         val progress = waterTracker.getProgress()
         circleProgress.setProgress(progress.toFloat())
         waterCountText.text = waterTracker.getCurrentCount()
+
+        // Verifica si se alcanzó la meta diaria
+        if (waterTracker.getCurrentCount() == "6/6") { // Ajusta "6/6" según tu meta diaria
+            showDailyGoalReachedAlert()
+        }
     }
 }
