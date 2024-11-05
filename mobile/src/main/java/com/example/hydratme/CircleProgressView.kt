@@ -28,8 +28,8 @@ class CircleProgressView @JvmOverloads constructor(
         isAntiAlias = true
     }
 
-    fun setProgress(newProgress: Float) {
-        progress = newProgress
+    fun setProgress(newProgress: Int, dailyGoal: Int) {
+        progress = newProgress.toFloat()
         invalidate() // Redibuja la vista con el progreso actualizado
     }
 
