@@ -5,7 +5,6 @@
     android:background="#000000"
     android:gravity="center">
 
-    <!-- Barra de progreso en forma de arco -->
     <com.example.hydratme.presentation.CircleProgressView
         android:id="@+id/circle_progress"
         android:layout_width="200dp"
