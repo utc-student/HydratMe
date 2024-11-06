@@ -14,7 +14,7 @@ class CircleProgressView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var progress: Float = 0f
+    private var progress: Float = 0f // Progreso en rango 0 a 1
     private val backgroundPaint = Paint().apply {
         color = Color.parseColor("#555555") // Color gris del fondo
         style = Paint.Style.STROKE
@@ -29,7 +29,7 @@ class CircleProgressView @JvmOverloads constructor(
     }
 
     fun setProgress(newProgress: Float) {
-        progress = newProgress
+        progress = newProgress.coerceIn(0f, 1f) // Asegúrate de que esté entre 0 y 1
         invalidate() // Redibuja la vista con el progreso actualizado
     }
 
@@ -44,7 +44,7 @@ class CircleProgressView @JvmOverloads constructor(
         canvas.drawCircle(centerX, centerY, radius, backgroundPaint)
 
         // Dibuja el progreso
-        val sweepAngle = (progress / 100) * 360 // Convierte el progreso en grados
+        val sweepAngle = progress * 360 // Convierte el progreso a grados
         canvas.drawArc(
             centerX - radius, centerY - radius,
             centerX + radius, centerY + radius,
