@@ -14,23 +14,28 @@ class CircleProgressView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var progress: Float = 0f // Progreso en rango 0 a 1
+    private var progress: Float = 0f
     private val backgroundPaint = Paint().apply {
-        color = Color.parseColor("#555555") // Color gris del fondo
+        color = Color.parseColor("#555555")
         style = Paint.Style.STROKE
         strokeWidth = 20f
         isAntiAlias = true
     }
     private val progressPaint = Paint().apply {
-        color = Color.parseColor("#00BFFF") // Color azul del progreso
+        color = Color.parseColor("#00BFFF") // Color inicial del progreso
         style = Paint.Style.STROKE
         strokeWidth = 20f
         isAntiAlias = true
     }
 
-    fun setProgress(newProgress: Float) {
-        progress = newProgress.coerceIn(0f, 1f) // Asegúrate de que esté entre 0 y 1
-        invalidate() // Redibuja la vista con el progreso actualizado
+    fun setProgress(newProgress: Int, dailyGoal: Int) {
+        progress = (newProgress.toFloat() / dailyGoal).coerceIn(0f, 1f)
+        invalidate()  // Redibuja la vista con el progreso actualizado
+    }
+
+    fun setProgressColor(color: String) {
+        progressPaint.color = Color.parseColor(color)
+        invalidate()  // Redibuja la vista con el nuevo color
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -38,13 +43,13 @@ class CircleProgressView @JvmOverloads constructor(
 
         val centerX = width / 2f
         val centerY = height / 2f
-        val radius = min(centerX, centerY) - 45f // Reduce el radio
+        val radius = min(centerX, centerY) - 45f
 
         // Dibuja el fondo circular
         canvas.drawCircle(centerX, centerY, radius, backgroundPaint)
 
         // Dibuja el progreso
-        val sweepAngle = progress * 360 // Convierte el progreso a grados
+        val sweepAngle = progress * 360
         canvas.drawArc(
             centerX - radius, centerY - radius,
             centerX + radius, centerY + radius,

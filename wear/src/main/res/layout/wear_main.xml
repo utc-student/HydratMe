@@ -15,7 +15,7 @@
         android:id="@+id/contador_agua"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1/6"
+        android:text="0/6"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:layout_centerHorizontal="true"

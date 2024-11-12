@@ -8,18 +8,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.hydratme.R
-import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataEvent
-import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMapItem
-import com.google.android.gms.wearable.Wearable
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
-class MainActivity : ComponentActivity(), DataClient.OnDataChangedListener {
+class MainActivity : ComponentActivity() {
 
     private lateinit var circleProgressView: CircleProgressView
     private lateinit var contadorTextView: TextView
     private lateinit var addButton: Button
-    private var dailyGoal = 10
+    private var dailyGoal = 8
     private var currentCount = 0
     private val handler = Handler(Looper.getMainLooper())
 
@@ -32,10 +31,14 @@ class MainActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         contadorTextView = findViewById(R.id.contador_agua)
         addButton = findViewById(R.id.agregar_agua)
 
+        // Escuchar cambios en Firebase para dailyGoal y currentCount
+        obtenerDatosDesdeFirebase()
+
         // Configurar el botón para incrementar el contador de vasos de agua
         addButton.setOnClickListener {
             if (currentCount < dailyGoal) {
                 currentCount++
+                guardarCurrentCountEnFirebase(currentCount)  // Actualizar en Firebase
                 actualizarUI()
             } else {
                 mostrarAlertaMetaAlcanzada()
@@ -46,48 +49,67 @@ class MainActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         actualizarUI()
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Registrar el listener de DataClient para recibir datos
-        Wearable.getDataClient(this).addListener(this)
-    }
+    private fun obtenerDatosDesdeFirebase() {
+        val database = FirebaseDatabase.getInstance()
+        val goalRef = database.getReference("dailyGoal")
+        val countRef = database.getReference("currentCount")
 
-    override fun onPause() {
-        super.onPause()
-        // Desregistrar el listener de DataClient
-        Wearable.getDataClient(this).removeListener(this)
-    }
-
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        for (event in dataEvents) {
-            if (event.type == DataEvent.TYPE_CHANGED) {
-                val dataItem = event.dataItem
-                if (dataItem.uri.path == "/configuracion_hidratacion") {
-                    val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    dailyGoal = dataMap.getInt("vasosDiarios", dailyGoal) // Actualiza la meta
-                    currentCount = 0 // Reinicia el contador cuando cambia la meta
-                    actualizarUI() // Actualiza la UI con la nueva meta
+        // Listener para obtener dailyGoal
+        goalRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.getValue(Int::class.java)?.let { updatedDailyGoal ->
+                    dailyGoal = updatedDailyGoal
+                    actualizarUI() // Actualiza la UI con el nuevo dailyGoal
                 }
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MainActivity, "Error al obtener dailyGoal: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        // Listener para obtener currentCount
+        countRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.getValue(Int::class.java)?.let { updatedCurrentCount ->
+                    currentCount = updatedCurrentCount
+                    actualizarUI() // Actualiza la UI con el nuevo currentCount
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MainActivity, "Error al obtener currentCount: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun guardarCurrentCountEnFirebase(count: Int) {
+        val database = FirebaseDatabase.getInstance()
+        val countRef = database.getReference("currentCount")
+
+        countRef.setValue(count)
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al actualizar el contador", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun actualizarUI() {
-        // Calcula el progreso como un porcentaje, asegurándose de que esté entre 0 y 1
-        val progress = currentCount.toFloat() / dailyGoal.toFloat()
         contadorTextView.text = "$currentCount/$dailyGoal"
 
-        // Asegúrate de que el progreso no exceda 1.0
-        circleProgressView.setProgress(progress.coerceIn(0f, 1f))
-    }
+        // Cambia el color del círculo al alcanzar la meta
+        if (currentCount >= dailyGoal) {
+            circleProgressView.setProgressColor("#00FF00")  // Color verde al alcanzar la meta
+        } else {
+            circleProgressView.setProgressColor("#00BFFF")  // Color azul si no ha alcanzado la meta
+        }
 
+        circleProgressView.setProgress(currentCount, dailyGoal)
+    }
 
     private fun mostrarAlertaMetaAlcanzada() {
         Toast.makeText(this, "¡Has alcanzado tu meta diaria de agua!", Toast.LENGTH_SHORT).show()
         handler.postDelayed({
-            // Ocultar el mensaje después de unos segundos
             Toast.makeText(this, "", Toast.LENGTH_SHORT).cancel()
         }, 2000)
     }
 }
-
