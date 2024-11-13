@@ -7,7 +7,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -46,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         val buttonGuardar = findViewById<Button>(R.id.guardar_configuracion)
         buttonGuardar.setOnClickListener {
             dailyGoal = numberPicker.value
-            enviarVasosDiariosAlWatch(dailyGoal)
             guardarMetaEnFirebase(dailyGoal)  // Guardar en Firebase
             actualizarUI()
             Toast.makeText(this, "Meta de vasos diaria actualizada a $dailyGoal", Toast.LENGTH_SHORT).show()
@@ -58,20 +56,6 @@ class MainActivity : AppCompatActivity() {
         contadorTextView.text = "$currentCount/$dailyGoal"
         // Actualizar el progreso en la vista personalizada de progreso circular
         circleProgressView.setProgress(currentCount, dailyGoal)
-    }
-
-    private fun enviarVasosDiariosAlWatch(vasosDiarios: Int) {
-        val putDataReq = PutDataMapRequest.create("/configuracion_hidratacion").apply {
-            dataMap.putInt("vasosDiarios", vasosDiarios)
-        }.asPutDataRequest()
-
-        dataClient.putDataItem(putDataReq)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Configuración enviada al reloj", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error al enviar configuración", Toast.LENGTH_SHORT).show()
-            }
     }
 
     private fun guardarMetaEnFirebase(dailyGoal: Int) {

@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="wear">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-06T00:45:01.334362600Z">
+        <DropdownSelection timestamp="2024-11-13T00:30:34.426609500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\AlonsoVV\.android\avd\CakeOS.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=89zxhyjnm7emeisg" />
             </handle>
           </Target>
         </DropdownSelection>
