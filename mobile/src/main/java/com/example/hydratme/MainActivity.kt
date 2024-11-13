@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         numberPicker.minValue = 1
         numberPicker.maxValue = 20
 
-        // Obtener el valor de dailyGoal y currentCount desde Firebase
+        // Escuchar cambios en Firebase para dailyGoal y currentCount
         obtenerDailyGoalDesdeFirebase()
         obtenerCurrentCountDesdeFirebase()
 
@@ -77,8 +77,8 @@ class MainActivity : AppCompatActivity() {
         val database = Firebase.database
         val goalRef = database.getReference("dailyGoal")
 
-        // Escucha los cambios en el valor de dailyGoal
-        goalRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        // Escucha los cambios en el valor de dailyGoal de manera persistente
+        goalRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // Verificar si el valor existe y actualizar dailyGoal
                 snapshot.getValue(Int::class.java)?.let { value ->
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         val database = Firebase.database
         val countRef = database.getReference("currentCount")
 
-        // Escucha los cambios en el valor de currentCount
+        // Escucha los cambios en el valor de currentCount de manera persistente
         countRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // Verificar si el valor existe y actualizar currentCount
