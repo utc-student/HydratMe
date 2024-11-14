@@ -59,6 +59,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun actualizarUI() {
         contadorTextView.text = "$currentCount/$dailyGoal"
+
+        // Cambia el color del círculo al alcanzar la meta
+        if (currentCount >= dailyGoal) {
+            circleProgressView.setProgressColor("#00FF00")  // Color verde al alcanzar la meta
+        } else {
+            circleProgressView.setProgressColor("#00BFFF")  // Color azul si no ha alcanzado la meta
+        }
+
         circleProgressView.setProgress(currentCount, dailyGoal)
     }
 
