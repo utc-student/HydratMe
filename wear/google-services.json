@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "26829564498",
+    "project_id": "hydratme",
+    "storage_bucket": "hydratme.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26829564498:android:8744cf873076061fb6cd8b",
+        "android_client_info": {
+          "package_name": "com.example.hydratme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5f-mUcI7EfbgUeburToTPiz1sKc47cpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
